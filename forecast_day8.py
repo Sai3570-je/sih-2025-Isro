@@ -1,10 +1,14 @@
-"""
-Day 8 Forecast - Pure Prediction (No Ground Truth)
+"""Day 8 Forecast - Pure Prediction (No Ground Truth)
 Extrapolates from Days 1-7 training data to predict Day 8
 """
 import pickle
 import pandas as pd
 import numpy as np
+import sys
+from pathlib import Path
+
+# Ensure wavelet_kalman_filter module can be imported
+sys.path.insert(0, str(Path(__file__).parent))
 from wavelet_kalman_filter import WaveletKalmanFilter
 
 print("="*80)
@@ -13,25 +17,43 @@ print("="*80)
 
 # Load trained model
 print("\n[1/4] Loading trained model...")
-with open('outputs/wavelet_kalman_model.pkl', 'rb') as f:
-    model = pickle.load(f)
-print("   ✓ Model loaded successfully")
+model_path = Path('outputs/wavelet_kalman_model.pkl')
+if not model_path.exists():
+    raise FileNotFoundError(f"Model file not found: {model_path}")
+
+try:
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    print("   ✓ Model loaded successfully")
+except Exception as e:
+    raise RuntimeError(f"Failed to load model: {e}")
 
 # Load training data
 print("\n[2/4] Loading training data (Days 1-7)...")
-df = pd.read_parquet('temp/MEO_01_timeseries.parquet')
+data_path = Path('temp/MEO_01_timeseries.parquet')
+if not data_path.exists():
+    raise FileNotFoundError(f"Data file not found: {data_path}")
+
+df = pd.read_parquet(data_path)
 df = df.sort_values('timestamp').reset_index(drop=True)
 
 # Training data: up to Sept 9, 01:30
 df_train = df[df['timestamp'] <= '2025-09-09 01:30:00'].dropna().copy()
+if len(df_train) == 0:
+    raise ValueError("No valid training data found")
+
 print(f"   Training records: {len(df_train)}")
 print(f"   Last training timestamp: {df_train['timestamp'].max()}")
 
 # Get last state from training
 print("\n[3/4] Extracting final state from training...")
+if not hasattr(model, 'state') or model.state is None:
+    raise RuntimeError("Model has no trained state")
+
 last_state = model.state.copy()
 last_P = model.P.copy()
 print(f"   Last state: {last_state}")
+print(f"   State validity check: {'✓ PASS' if not np.any(np.isnan(last_state)) else '✗ FAIL'}")
 
 # Generate Day 8 timestamps (96 = 24 hours * 4 per hour)
 print("\n[4/4] Forecasting Day 8 (pure extrapolation)...")
