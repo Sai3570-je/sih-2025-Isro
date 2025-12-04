@@ -1,0 +1,2 @@
+timestamp,date,time_of_day,satellite,x_error,y_error,z_error,clock_error
+2025-09-03 11:25:00,2025-09-03,11:25,GEO,-2.092337634,-1.452630259,-0.883779709,0.230126956

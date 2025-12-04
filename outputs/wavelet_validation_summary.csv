@@ -1,5 +1,0 @@
-Component,Train_Shapiro_p,Train_Kurtosis,Train_Pass,Day8_Shapiro_p,Day8_Kurtosis,Day8_Pass
-X_Error,0.698334487789386,-0.028186478046070995,True,,,False
-Y_Error,0.6552026105062709,-0.1133607017746745,True,,,False
-Z_Error,0.9851526275686666,0.018430155319938635,True,,,False
-Clock_Error,0.8037598862078108,0.008763875593120751,True,,,False

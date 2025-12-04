@@ -1,0 +1,2 @@
+timestamp,date,time_of_day,satellite,x_error,y_error,z_error,clock_error
+2025-09-04 21:59:00,2025-09-04,21:59,MEO2,-0.482253073,0.1169241,-0.548191147,-0.077181149
